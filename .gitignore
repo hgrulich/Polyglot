@@ -5,3 +5,7 @@
 /.vs
 /src/.vs/TeutonicLehrer
 /src/TeutonicLehrer/obj
+/src/.vs/ProjectEvaluation
+/src/.cr/personal/FavoritesList
+/src/Polyglot/.vs/Polyglot
+/src/Polyglot/Polyglot.WebUI/obj
