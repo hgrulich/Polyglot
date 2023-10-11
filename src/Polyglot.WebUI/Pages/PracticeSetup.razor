@@ -1,0 +1,48 @@
+﻿@using Polyglot.WebUI.Components
+@using Polyglot.Application.Models
+@using Polyglot.WebUI.ViewModels
+@using Polyglot.Application
+@using Polyglot.WebUI.StateContainers
+@page "/setup"
+
+@inject NavigationManager Manager
+@inject IVocabularyService VocabularyService
+@inject PracticeSetupContainer SetupContainer;
+
+<PageTitle>Procvičování slovíček</PageTitle>
+
+<h1>Procvičování slovíček</h1>
+
+<VocabularySelectionComponent Lessons="_lessonsSelection" />
+
+<label for="customRange3" class="form-label">Počet správných odpovědí naučeného slovíčka: @_successCount</label>
+<input type="range" class="form-range" min="1" max="10" step="1" id="successCountSelection" @bind="_successCount">
+
+<button class="btn btn-primary" @onclick="StartPractice">Start</button>
+
+
+@code {
+
+    Lesson[] _lessons;
+    LessonSelectionViewModel[] _lessonsSelection;
+    int _successCount { get; set; } = 3;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await VocabularyService.InitializeAsync(default);
+        _lessons = VocabularyService.AvailableLessons;
+        _lessonsSelection = _lessons.Select(x => new LessonSelectionViewModel(x.Name)).ToArray();
+    }
+
+
+    private void StartPractice()
+    {
+        SetupContainer.LessonsToPractice = _lessonsSelection
+            .Where(x => x.IsSelected)
+            .Select(x => _lessons.First(l => l.Name == x.LessonName))
+            .ToArray();
+        SetupContainer.SuccessCount = _successCount;
+        Manager.NavigateTo("/practice/");
+    }
+    
+}
